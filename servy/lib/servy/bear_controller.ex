@@ -10,8 +10,8 @@ defmodule Servy.BearController do
       %Conv{ conv | status: 200, resp_body: BearView.index(bears) }
   end
 
-  def route(%Conv{ method: "GET", path: "/bears/new" } = conv) do
-    route(%Conv{ conv | path: "/pages/form" })
+  def new(%Conv{} = conv, _params) do
+    %Conv{ conv | path: "/pages/form" }
   end
 
   def show(%Conv{} = conv, %{"id" => id}) do

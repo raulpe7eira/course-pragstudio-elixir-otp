@@ -31,7 +31,7 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/bears/new" } = conv) do
-    route(%Conv{ conv | path: "/pages/form" })
+    route(BearController.new(conv, conv.params))
   end
 
   def route(%Conv{ method: "GET", path: "/bears/" <> id } = conv) do
