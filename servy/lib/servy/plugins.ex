@@ -4,11 +4,11 @@ defmodule Servy.Plugins do
   alias Servy.Conv
 
   def rewrite_path(%Conv{ path: "/wildlife" } = conv) do
-    %{ conv | path: "/wildthings" }
+    %Conv{ conv | path: "/wildthings" }
   end
 
   def rewrite_path(%Conv{ path: "/bears?id=" <> id } = conv) do
-    %{ conv | path: "/bears/#{id}" }
+    %Conv{ conv | path: "/bears/#{id}" }
   end
 
   def rewrite_path(%Conv{} = conv), do: conv
@@ -19,7 +19,7 @@ defmodule Servy.Plugins do
     emojies = String.duplicate("🎉", 5)
     body = emojies <> "\n" <> conv.resp_body <> "\n" <> emojies
 
-    %{ conv | resp_body: body }
+    %Conv{ conv | resp_body: body }
   end
 
   def emojify(%Conv{} = conv), do: conv
