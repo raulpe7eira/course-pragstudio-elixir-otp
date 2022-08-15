@@ -42,6 +42,10 @@ defmodule Servy.Handler do
     %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
   end
 
+  def route(%{ method: "GET", path: "/bears/new" } = conv) do
+    route(%{ conv | path: "/pages/form" })
+  end
+
   def route(%{ method: "GET", path: "/bears/" <> id } = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
@@ -50,28 +54,19 @@ defmodule Servy.Handler do
     %{ conv | status: 403, resp_body: "Deleting a bear is forbidden!"}
   end
 
-  # def route(%{ method: "GET", path: "/about" } = conv) do
-  #   file =
-  #     Path.expand("../../pages", __DIR__)
-  #     |> Path.join("about.html")
-
-  #   case File.read(file) do
-  #     {:ok, content} ->
-  #       %{ conv | status: 200, resp_body: content }
-
-  #     {:error, :enoent} ->
-  #       %{ conv | status: 404, resp_body: "File not found!" }
-
-  #     {:error, reason} ->
-  #       %{ conv | status: 500, resp_body: "File error: #{reason}" }
-  #   end
-  # end
-
   def route(%{ method: "GET", path: "/about" } = conv) do
+    route(%{ conv | path: "/pages/about" })
+  end
+
+  def route(%{method: "GET", path: "/pages/" <> file} = conv) do
     Path.expand("../../pages", __DIR__)
-    |> Path.join("about.html")
+    |> Path.join(file <> ".html")
     |> File.read
     |> handle_file(conv)
+  end
+
+  def route(%{ path: path } = conv) do
+    %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
   def handle_file({:ok, content}, conv) do
@@ -84,10 +79,6 @@ defmodule Servy.Handler do
 
   def handle_file({:error, reason}, conv) do
     %{ conv | status: 500, resp_body: "File error: #{reason}" }
-  end
-
-  def route(%{ path: path } = conv) do
-    %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
   def emojify(%{ status: 200 } = conv) do
@@ -209,6 +200,17 @@ IO.puts response
 
 request ="""
 GET /about HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+response = Servy.Handler.handle(request)
+IO.puts response
+
+request ="""
+GET /bears/new HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
