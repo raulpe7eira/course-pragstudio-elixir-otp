@@ -1,17 +1,13 @@
 defmodule Servy.BearController do
 
-  alias Servy.Bear
-  alias Servy.Conv
-  alias Servy.Wildthings
-
-  @templates_path Path.expand("../../templates", __DIR__)
+  alias Servy.{Bear, BearView, Conv, Wildthings}
 
   def index(%Conv{} = conv) do
     bears =
       Wildthings.list_bears()
       |> Enum.sort(&Bear.order_asc_by_name/2)
 
-    render(conv, "index.eex", bears: bears)
+      %Conv{ conv | status: 200, resp_body: BearView.index(bears) }
   end
 
   def route(%Conv{ method: "GET", path: "/bears/new" } = conv) do
@@ -21,7 +17,7 @@ defmodule Servy.BearController do
   def show(%Conv{} = conv, %{"id" => id}) do
     bear = Wildthings.get_bear(id)
 
-    render(conv, "show.eex", bear: bear)
+    %Conv{ conv | status: 200, resp_body: BearView.show(bear) }
   end
 
   def delete(%Conv{} = conv, %{"id" => id}) do
@@ -30,14 +26,5 @@ defmodule Servy.BearController do
 
   def create(%Conv{} = conv, %{"name" => name, "type" => type}) do
     %Conv{ conv | status: 201, resp_body: "Create a #{type} bear named #{name}!" }
-  end
-
-  defp render(%Conv{} = conv, template, bindings \\ []) do
-    content =
-      @templates_path
-      |> Path.join(template)
-      |> EEx.eval_file(bindings)
-
-    %Conv{ conv | status: 200, resp_body: content }
   end
 end
