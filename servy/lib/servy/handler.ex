@@ -6,6 +6,7 @@ defmodule Servy.Handler do
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, emojify: 1, track: 1]
 
   alias Servy.Conv
+  alias Servy.BearController
 
   @pages_path Path.expand("../../pages", __DIR__)
 
@@ -26,7 +27,7 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/bears" } = conv) do
-    %Conv{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
+    BearController.index(conv)
   end
 
   def route(%Conv{ method: "GET", path: "/bears/new" } = conv) do
@@ -34,15 +35,17 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/bears/" <> id } = conv) do
-    %Conv{ conv | status: 200, resp_body: "Bear #{id}" }
+    params = Map.put(conv.params, "id", id)
+    BearController.show(conv, params)
   end
 
-  def route(%Conv{ method: "DELETE", path: "/bears/" <> _id } = conv) do
-    %Conv{ conv | status: 403, resp_body: "Deleting a bear is forbidden!"}
+  def route(%Conv{ method: "DELETE", path: "/bears/" <> id } = conv) do
+    params = Map.put(conv.params, "id", id)
+    BearController.delete(conv, params)
   end
 
   def route(%Conv{ method: "POST", path: "/bears" } = conv) do
-    %Conv{ conv | status: 201, resp_body: "Create a #{conv.params["type"]} bear named #{conv.params["name"]}!" }
+    BearController.create(conv, conv.params)
   end
 
   def route(%Conv{ method: "GET", path: "/about" } = conv) do
@@ -184,19 +187,19 @@ name=Baloo&type=Brown
 response = Servy.Handler.handle(request)
 IO.puts response
 
-request = """
-POST /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-Content-Type: multipart/form-data
-Content-Length: 21
+# request = """
+# POST /bears HTTP/1.1
+# Host: example.com
+# User-Agent: ExampleBrowser/1.0
+# Accept: */*
+# Content-Type: multipart/form-data
+# Content-Length: 21
 
-name=Baloo&type=Brown
-"""
+# name=Baloo&type=Brown
+# """
 
-response = Servy.Handler.handle(request)
-IO.puts response
+# response = Servy.Handler.handle(request)
+# IO.puts response
 
 expected_response="""
 HTTP/1.1 200 OK
