@@ -1,4 +1,4 @@
-# ERLANG VERSION
+# ERLANG SERVER VERSION
 # server() ->
 #   {ok, LSock} = gen_tcp:listen(5678, [binary, {packet, 0}, {active, false}]),
 #   {ok, Sock} = gen_tcp:accept(LSock),
@@ -6,7 +6,7 @@
 #   ok = gen_tcp:close(Sock),
 #   Bin.
 
-# ELIXIR VERSION
+# ELIXIR SERVER VERSION
 # def server do
 #   {:ok, lsock} = :gen_tcp.listen(5678, [:binary, packet: 0, active: false])
 #   {:ok, sock} = :gen_tcp.accept(lsock)
