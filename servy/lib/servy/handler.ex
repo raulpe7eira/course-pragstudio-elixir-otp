@@ -19,6 +19,7 @@ defmodule Servy.Handler do
     |> route
     |> emojify
     |> track
+    |> put_content_length
     |> format_response
   end
 
@@ -48,17 +49,26 @@ defmodule Servy.Handler do
     BearController.delete(conv, params)
   end
 
+  def route(%Conv{ method: "POST", path: "/api/bears" } = conv) do
+    Servy.Api.BearController.create(conv, conv.params)
+  end
+
   def route(%Conv{ method: "POST", path: "/bears" } = conv) do
     BearController.create(conv, conv.params)
   end
 
   def route(%Conv{ method: "GET", path: "/about" } = conv) do
-    route(%Conv{ conv | path: "/pages/about" })
+    route(%Conv{ conv | path: "/pages/about.html" })
+  end
+
+  def route(%Conv{ method: "GET", path: "/faq" } = conv) do
+    route(%Conv{ conv | path: "/pages/faq.md" })
+    |> markdown_to_html
   end
 
   def route(%Conv{method: "GET", path: "/pages/" <> file} = conv) do
     @pages_path
-    |> Path.join(file <> ".html")
+    |> Path.join(file)
     |> File.read
     |> handle_file(conv)
   end
@@ -67,13 +77,29 @@ defmodule Servy.Handler do
     %Conv{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
+  def markdown_to_html(%Conv{status: 200} = conv) do
+    %{ conv | resp_body: Earmark.as_html!(conv.resp_body) }
+  end
+
+  def markdown_to_html(%Conv{} = conv), do: conv
+
+  def put_content_length(%Conv{} = conv) do
+    resp_headers = Map.put(conv.resp_headers, "Content-Length", byte_size(conv.resp_body))
+    %Conv{ conv | resp_headers: resp_headers }
+  end
+
   def format_response(%Conv{} = conv) do
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
-    Content-Type: #{conv.resp_content_type}\r
-    Content-Length: #{byte_size(conv.resp_body)}\r
+    #{format_response_headers(conv)}
     \r
     #{conv.resp_body}
     """
+  end
+
+  defp format_response_headers(conv) do
+    Enum.map(conv.resp_headers, fn {key, value} ->
+      "#{key}: #{value}\r"
+    end) |> Enum.sort |> Enum.reverse |> Enum.join("\n")
   end
 end

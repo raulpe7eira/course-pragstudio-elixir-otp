@@ -11,7 +11,7 @@ defmodule Servy.BearController do
   end
 
   def new(%Conv{} = conv, _params) do
-    %Conv{ conv | path: "/pages/form" }
+    %Conv{ conv | path: "/pages/form.html" }
   end
 
   def show(%Conv{} = conv, %{"id" => id}) do
