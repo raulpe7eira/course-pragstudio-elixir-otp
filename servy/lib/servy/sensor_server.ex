@@ -45,7 +45,7 @@ defmodule Servy.SensorServer do
     sensor_data = run_tasks_to_get_sensor_data()
     initial_state = %{state | sensor_data: sensor_data}
     schedule_refresh(state.refresh_interval)
-    {:ok, initial_state}
+    {:noreply, initial_state}
   end
 
   def handle_info(unexpected, %State{} = state) do
