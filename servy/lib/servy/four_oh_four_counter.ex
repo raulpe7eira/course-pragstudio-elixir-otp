@@ -27,6 +27,9 @@ defmodule Servy.FourOhFourCounter do
   end
 
   # Server Callbacks
+  def init(init_arg) do
+    {:ok, init_arg}
+  end
 
   def handle_call({:bump_count, path}, _form, state) do
     new_state = Map.update(state, path, 1, &(&1 + 1))
@@ -43,6 +46,6 @@ defmodule Servy.FourOhFourCounter do
   end
 
   def handle_cast(:reset, _state) do
-    %{:noreply, %{}}
+    {:noreply, %{}}
   end
 end

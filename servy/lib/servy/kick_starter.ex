@@ -25,7 +25,7 @@ defmodule Servy.KickStarter do
     {:reply, state, state}
   end
 
-  def handle_info({:EXIT, _pid, reason}, state) do
+  def handle_info({:EXIT, _pid, reason}, _state) do
     IO.puts "HttpServer exited (#{inspect reason})"
     server_pid = start_server()
     {:noreply, server_pid}
@@ -35,6 +35,6 @@ defmodule Servy.KickStarter do
     IO.puts "Starting the HTTP server..."
     server_pid = spawn_link(Server.HttpServer, :start, [4000])
     Process.register(server_pid, :http_server)
-    server_id
+    server_pid
   end
 end

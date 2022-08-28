@@ -9,8 +9,9 @@ defmodule Servy.SensorServer do
 
   # Client Interface
 
-  def start do
-    GenServer.start(__MODULE__, %State{}, name: @name)
+  def start_link(interval) do
+    IO.puts "Starting the sensor server witch #{interval} min refresh..."
+    GenServer.start_link(__MODULE__, %{%State{} | refresh_interval: interval}, name: @name)
   end
 
   def get_sensor_data do
@@ -23,7 +24,7 @@ defmodule Servy.SensorServer do
 
   # Server Callbacks
 
-  def init(%State{} = _state) do
+  def init(%State{} = state) do
     sensor_data = run_tasks_to_get_sensor_data()
     initial_state = %{state | sensor_data: sensor_data}
     schedule_refresh(state.refresh_interval)
@@ -39,7 +40,7 @@ defmodule Servy.SensorServer do
     {:noreply, new_state}
   end
 
-  def handle_info(:refresh, %State{} = _state) do
+  def handle_info(:refresh, %State{} = state) do
     IO.puts "Refreshing the cache..."
     sensor_data = run_tasks_to_get_sensor_data()
     initial_state = %{state | sensor_data: sensor_data}
