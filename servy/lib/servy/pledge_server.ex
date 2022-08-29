@@ -1,5 +1,5 @@
 defmodule Servy.PledgeServer do
-  use GenServer, restart: :temporary
+  use GenServer, restart: :permanent
 
   @name :pledge_server
 
