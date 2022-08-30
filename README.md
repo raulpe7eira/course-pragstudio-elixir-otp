@@ -6,26 +6,20 @@ This repository is the code corresponding to the [The Pragmatic Studio: Elixir &
 
 ## Apps
 
-### Refuge
+### [Refuge](refuge/README.md)
 
 > The initial app with phoenix framework
 
 ![Refuge's Snapshot](doc/refuge-snapshot.png)
 
-[:link: More details](refuge/README.md)
-
-### Servy
+### [Servy](servy/README.md)
 
 > The app with all the exercises and practices
 
 ![Servy's Snapshot](doc/servy-snapshot.png)
 
-[:link: More details](servy/README.md)
-
-### Slurpie
+### [Slurpie](slurpie/README.md)
 
 > The initial app with supervisor configuration
 
 ![Slurpie's Snapshot](doc/slurpie-snapshot.png)
-
-[:link: More details](slurpie/README.md)
