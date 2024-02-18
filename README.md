@@ -1,6 +1,6 @@
 # course-pragstudio-elixir-otp
 
-This repository is the code corresponding to the [The Pragmatic Studio: Elixir & OTP](https://pragmaticstudio.com/courses/elixir) lab.
+This repository is the code corresponding to the [The Pragmatic Studio: Elixir & OTP](https://pragmaticstudio.com/courses/elixir) lab by Mike and Nicole Clark.
 
 > There are many apps in this repository.
 
